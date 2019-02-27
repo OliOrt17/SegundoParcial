@@ -31,17 +31,24 @@ require_once '../includes/_funciones.php';
         <div class="sidebar-sticky">
           <ul class="nav flex-column">
             <li class="nav-item">
-              <a class="nav-link active" href="#">
+              <a class="nav-link" href="#">
                 <span data-feather="home"></span>
-                Dashboard <span class="sr-only">(current)</span>
+                Dashboard 
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/cuda/backend/usuarios/">
+              <a class="nav-link active" href="../usuarios/">
                 <span data-feather="file"></span>
-                Usuarios
+                Usuarios<span class="sr-only">(current)</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../servicios/">
+                <span data-feather="file"></span>
+                Servicios<span class="sr-only">(current)</span>
+              </a>
+            </li>
+
           </ul>
         </div>
       </nav>
