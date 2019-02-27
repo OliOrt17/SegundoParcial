@@ -3,7 +3,7 @@ require_once '_db.php';
 if(isset($_POST["accion"])){
 	switch ($_POST["accion"]) {
 		case 'login':
-		login();
+		login($_POST["usuario"], $_POST["password"]);
 		break;
 		
 		case 'eliminar_usuarios':
@@ -26,15 +26,28 @@ function mostrar_usuarios(){
 	$consultar = $db->select("usuarios","*",["status_usr" => 1]);
 	echo json_encode($consultar);
 }
-function login(){
-		// Recibir y Sanear las variables
-		// Conectar a la base de datos
-		// Verificar si existe usuario
-			// Si el usuario existe
-					// Si la contraseña es válida, imprimir 1
-					// Si la contraseña no es válida, imprimir un 0
-			// Si el usuario no existe, imprimir un 2
-		// Cerrar la conexión
+function login($usuario, $password){
+    global $db;
+    $conpassword=$db->select("usuarios","*",["password_usr"=>$password]);#consulta para la contraseña
+    $conuser=$db->select("usuarios","*",["correo_usr"=>$usuario]);#consulta para usuario
+    
+      if ( filter_var($usuario,FILTER_VALIDATE_EMAIL) ){#funcion para validar el email sanear
+           if(!$conuser){
+               echo 2;
+               return false;
+           }elseif(!$conpassword){
+               echo 0;
+               return false;
+           }else{
+               echo 1;
+               return;
+           }
+        } else {
+            echo 3;
+          return false;
+        }
+    
+    
 }
 function eliminar_usuarios($usuario){
 	global $db;
