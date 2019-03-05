@@ -17,94 +17,101 @@ if(isset($_POST["accion"])){
         case 'insertar_usuarios':
             insertar_usuarios($_POST["nombre"], $_POST["correo"], $_POST["telefono"], $_POST["password"], $_POST["trabajo"], $_POST["descripcion"], $_POST["tipo"], $_POST["facebook"], $_POST["twitter"], $_POST["linkedin"], $_POST["foto"]);
             break;
+        case 'consulta_usuarios':
+            consulta_usuarios($_POST["registro"]);
+            break;
+        case 'editar_usuarios':
+            editar_usuarios();
+            break;
+            //Epieza skills
         case 'eliminar_skills':
-            eliminar_skills($_POST["skills"]);
-            break;
-        case 'mostrar_skills':
-            mostrar_skills();
-            break;
+		eliminar_skills($_POST["skills"]);
+		break;
+
+		case 'mostrar_skills':
+		mostrar_skills();
+		break;
+            
         case 'insertar_skills':
             insertar_skills();
             break;
-            
-         case 'consulta_individualskl':
+        case 'consulta_individualskl':
             consulta_individualskl($_POST["registro"]);
             break;
-         case 'editar_skl':
-            editar_skl();
+        case 'editar_skills':
+            editar_skills();
             break;
             
-        case 'eliminar_cliente':
-            eliminar_cliente($_POST["people"]);
-            break;
+            //empiez funciones del modulo clientes
+        case 'eliminar_clientes':
+		eliminar_clientes($_POST["people"]);
+		break;
+
+		case 'mostrar_clientes':
+		mostrar_clientes();
+		break;
             
-        case 'mostrar_cliente':
-            mostrar_cliente();
-        
-        case 'insertar_cliente':
-            insertar_cliente();
+        case 'insertar_clientes':
+            insertar_clientes();
             break;
-          
-        case 'consulta_individual':
-            consulta_individual($_POST["registro"]);
+        case 'consulta_clientes':
+            consulta_clientes($_POST["registro"]);
             break;
-        
-         case 'editar_cliente':
-            editar_cliente();
+        case 'editar_clientes':
+            editar_clientes();
             break;
-            
         default:
 		break;
 	}
 }
 
-function insertar_cliente(){
-    global $db;
-    extract($_POST);
-    $insertar = $db->insert("people", ["nombre_ppl" => $nombre,
-                                    "titulo_ppl" => $pto,
-                                    "descripcion_ppl" => $descripcion,
-                                    "status_ppl" => 1,
-                                    "foto_ppl" => $foto]);
-    
-    if($insertar){
-        echo "Registro exitoso";
-    }else{
-        echo "Ocurrio un problema";
-    }
 
-}
-
-function eliminar_cliente($people){
+function mostrar_clientes(){
     global $db;
-    $eliminar=$db -> delete("people", ["id_ppl" =>$people]);
-    if($eliminar){
-        echo "Cliente eliminado";
-    }else{
-        echo "Ocurrio un problema";
-    }
-}
-
-function mostrar_cliente(){
-    global $db;
-    $consultar = $db -> select("people","*",["status_ppl"=>1]);
+    $consultar=$db->select("people","*",["status_ppl" =>1]);
     echo json_encode($consultar);
 }
+function eliminar_clientes($people){
+    
+	global $db;
+	$eliminar = $db->delete("people",["id_ppl" => $people]);
+	if($eliminar){
+		echo "Registro eliminado";
+	}else{
+		echo "Ocurrio un error";
+	}
 
-function consulta_individual($id){
+}
+function insertar_clientes(){
+        global $db;
+    extract($_POST);
+  $insertar=$db ->insert("people",["nombre_ppl" => $nombre,
+                                                "titulo_ppl"=>$pto,
+                                                "descripcion_ppl"=>$descp,
+                                                "foto_ppl"=>$foto,
+                                              "status_ppl"=>1
+                                             ]);
+    if($insertar){
+		echo "Registro existoso";
+	}else{
+		echo "Se ocasiono un error";
+	}
+}
+
+function consulta_clientes($id){
     global $db;
     $consultar = $db -> get("people","*",["AND" => ["status_ppl"=>1, "id_ppl"=>$id]]);
     echo json_encode($consultar);
 }
 
-function editar_cliente(){
+function editar_clientes(){
     global $db;
     extract($_POST);
     $editar = $db->update("people", ["nombre_ppl" => $nombre,
                                     "titulo_ppl" => $pto,
-                                    "descripcion_ppl" => $descripcion,
-                                    "status_ppl" => 1,
-                                    "foto_ppl" => $foto],["id_ppl"=>$registro]);
+                                     "descripcion_ppl" => $descp,
+                                     "foto_ppl"=>$foto,
+                                    "status_ppl" => 1], ["id_ppl"=>$registro]);
     
     if($editar){
         echo "Registro exitoso";
@@ -113,7 +120,6 @@ function editar_cliente(){
     }
 
 }
-
 function mostrar_skills(){
     global $db;
     $consultar=$db->select("skills","*",["status_skl" =>1]);
@@ -150,7 +156,7 @@ function consulta_individualskl($id){
     echo json_encode($consultar);
 }
 
-function editar_skl(){
+function editar_skills(){
     global $db;
     extract($_POST);
     $editar = $db->update("skills", ["nombre_skl" => $nombre,
@@ -220,12 +226,40 @@ function insertar_usuarios($nombre, $correo, $telefono, $password, $trabajo, $de
                                               "foto_usr" => $foto
                                              ]);
     if($insertar_usuarios){
-		echo 1;
+		echo "Registro existoso";
 	}else{
-		echo 0;
+		echo "Se ocasiono un error";
 	}
- 
 }
+function consulta_usuarios($id){
+    global $db;
+    $consultar = $db -> get("usuarios","*",["AND" => ["status_usr"=>1, "id_usr"=>$id]]);
+    echo json_encode($consultar);
+}
+function editar_usuarios(){
+ 
+    global $db;
+    extract($_POST);
+  $editar=$db ->update("usuarios",["nombre_usr" => $nombre,
+                                           "correo_usr" => $correo,
+                                            "telefono_usr" => $telefono,
+                                            "password_usr" => $password,
+                                            "status_usr" => 1,
+                                             "tbj_usr" => $trabajo,
+                                             "descp_usr" => $descripcion,
+                                             "tipo_usr" => $tipo,
+                                             "faceb_usr" => $facebook,
+                                              "twitter_usr" => $twitter,
+                                              "linkedin_usr" => $linkedin,
+                                              "foto_usr" => $foto
+                                             ],["id_usr"=>$registro]);
+    if($editar){
+		echo "Registro existoso";
+	}else{
+		echo "Se ocasiono un error";
+	}
+}
+
 ?>
 
 

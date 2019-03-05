@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once '../includes/_db.php';
 require_once '../includes/_funciones.php';
 ?>
@@ -33,7 +33,7 @@ require_once '../includes/_funciones.php';
             <li class="nav-item">
               <a class="nav-link" href="#">
                 <span data-feather="home"></span>
-                Dashboard 
+                Dashboard
               </a>
             </li>
             <li class="nav-item">
@@ -42,13 +42,13 @@ require_once '../includes/_funciones.php';
                 Usuarios<span class="sr-only">(current)</span>
               </a>
             </li>
-            <li class="nav-item">
+           <li class="nav-item">
               <a class="nav-link" href="../servicios/">
                 <span data-feather="file"></span>
                 Servicios<span class="sr-only">(current)</span>
               </a>
             </li>
-             <li class="nav-item">
+              <li class="nav-item">
               <a class="nav-link" href="../meet/">
                 <span data-feather="file"></span>
                 Meet<span class="sr-only">(current)</span>
@@ -66,7 +66,12 @@ require_once '../includes/_funciones.php';
                 Portafolio<span class="sr-only">(current)</span>
               </a>
             </li>
-
+             <li class="nav-item">
+              <a class="nav-link" href="../people/">
+                <span data-feather="file"></span>
+                Clientes<span class="sr-only">(current)</span>
+              </a>
+            </li>
           </ul>
         </div>
       </nav>
@@ -86,7 +91,7 @@ require_once '../includes/_funciones.php';
               </tr>
             </thead>
             <tbody>
-              <?php 
+              <?php
               $usuarios = $db->select("usuarios","*",["status_usr" => 1]);
               foreach ($usuarios as $usuario => $usr) {
                 ?>
@@ -159,7 +164,7 @@ require_once '../includes/_funciones.php';
                 <div class="col">
                   <button type="button" class="btn btn-outline-danger cancelar">Cancelar</button>
                   <button type="button" class="btn btn-outline-success" id="registrar">Guardar</button>
-                  
+
                 </div>
               </div>
             </form>
@@ -168,9 +173,8 @@ require_once '../includes/_funciones.php';
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    
     <script>
-                
+
       change_view();
       function change_view(vista = "mostrar_datos"){
         $("#main").find(".view").each(function(){
@@ -190,30 +194,33 @@ require_once '../includes/_funciones.php';
       });
          $("#main").on("click",".editar_registro", function(e){
         e.preventDefault();
-            change_view("formulario_datos");
+        change_view("formulario_datos");
         let id=$(this).data("id")
         let obj={
             "accion" : "consulta_usuarios",
             "registro" : $(this).data("id")
         }
          $.post("../includes/_funciones.php", obj, function(data){
-        $("#nombre").val(data.nombre_usr);
-        $("#correo").val(data.correo_usr);
-        $("#trabajo").val(data.tbj_usr);
-        $("#descripcion").val(data.descp_usr);
-        $("#foto").val(data.foto_usr);
-        $("#tipo").val(data.tipo_usr);
-        $("#password").val(data.password_usr);
-        $("#twitter").val(data.twitter_usr);
-        $("#linkedin").val(data.linkedin_usr);
-        $("#facebook").val(data.faceb_usr);
-        $("#telefono").val(data.telefono_usr);
+             $("#nombre").val(data.nombre_usr);
+             $("#correo").val(data.correo_usr);
+             $("#trabajo").val(data.tbj_usr);
+             $("#descripcion").val(data.descp_usr);
+             $("#foto").val(data.foto);
+             $("#tipo").val(data.tipo_usr);
+             $("#password").val(data.password_usr);
+             $("#twitter").val(data.twitter_usr);
+             $("#linkedin").val(data.linkedin_usr);
+             $("#facebook").val(data.faceb_usr);
+             $("#telefono").val(data.telefono_usr);
          }, "JSON");
-     $("#frm_datos").find("input").keyup(function(){
+        
+        $("#registrar").text("Actualizar").data("edicion", 1).data("registro", id);
+    });
+         $("#frm_datos").find("input").keyup(function(){
           $(this).removeClass("error");
         });
       $("#registrar").click(function(){
-          
+
           let nombre=$("#nombre").val();
         let correo=$("#correo").val();
         let trabajo=$("#trabajo").val();
@@ -239,7 +246,7 @@ require_once '../includes/_funciones.php';
             "facebook" : facebook,
             "telefono" : telefono
         };
-          
+
        
         $("#frm_datos").find("input").each(function(){
           $(this).removeClass("error");
@@ -249,27 +256,29 @@ require_once '../includes/_funciones.php';
           }else{
             obj[$(this).prop("name")] = $(this).val();
           }
-          
+
         });
           if($(this).data("edicion")==1){
-                obj["accion"]="editar_servicios";
+                obj["accion"]="editar_usuarios";
                 obj["registro"]=$(this).data("registro");
               $(this).text("Guardar").removeData("edicion").removeData("registro");
              }
-          
+
           if(nombre.length==0 || correo.length==0 || trabajo.length==0 || descripcion.length==0 || foto.length==0 || tipo.length==0 || password.length==0 || twitter.length==0 || linkedin.length==0 ||facebook.length==0 || telefono.length==0){
               alert("Por favor no dejes campos vacios");
-              
+
           }else{
               $.post("../includes/_funciones.php", obj, function(data){
                   alert(data);
-                 change_view(); 
-                    mostrar_servicios();
-                   $("#frm_datos")[0].reset();  
+                  change_view(); 
+              mostrar_usuarios();
+                   $("#frm_datos")[0].reset(); 
               });
-              
-          }
           
+
+
+          }
+
       });
       $("#main").on("click",".eliminar_registro",function(e){
         e.preventDefault();
@@ -286,9 +295,9 @@ require_once '../includes/_funciones.php';
         let obj = {
           "accion" : "mostrar_usuarios"
         }
-        
+
         $.post("../includes/_funciones.php",obj, function(data){
-          let template = ``; 
+          let template = ``;
           $.each(data, function(e,elem){
             template += `
             <tr>
@@ -301,7 +310,7 @@ require_once '../includes/_funciones.php';
             `;
           });
           $("#table_datos tbody").html(template);
-        },"JSON");      
+        },"JSON");
       }
     </script>
     </html>

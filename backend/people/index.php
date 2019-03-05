@@ -55,7 +55,7 @@ require_once '../includes/_funciones.php';
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link " href="../skills/">
+              <a class="nav-link" href="../skills/">
                 <span data-feather="file"></span>
                 Skills<span class="sr-only">(current)</span>
               </a>
@@ -66,10 +66,10 @@ require_once '../includes/_funciones.php';
                 Portafolio<span class="sr-only">(current)</span>
               </a>
             </li>
-            <li class="nav-item">
+             <li class="nav-item">
               <a class="nav-link active" href="../people/">
                 <span data-feather="file"></span>
-                Personas<span class="sr-only">(current)</span>
+                Clientes<span class="sr-only">(current)</span>
               </a>
             </li>
           </ul>
@@ -78,7 +78,7 @@ require_once '../includes/_funciones.php';
 
       <main id="main" role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
-        <h2>Skills
+        <h2>Clientes
           <button type="button" id="btn_nuevo" class="btn btn-outline-primary">Nuevo</button>
         </h2>
         <div class="table-responsive view" id="mostrar_datos">
@@ -123,8 +123,8 @@ require_once '../includes/_funciones.php';
                     <input type="text" class="form-control" name="pto" id="pto">
                   </div>
                    <div class="form-group">
-                    <label for="descripcion">descripcion</label>
-                    <input type="text" class="form-control" name="descripcion" id="descripcion">
+                    <label for="descp">Descripcion</label>
+                    <input type="text" class="form-control" name="descp" id="descp">
                   </div>
                    <div class="form-group">
                     <label for="foto">Foto</label>
@@ -160,37 +160,37 @@ require_once '../includes/_funciones.php';
       $("#btn_nuevo").click(function(){
         change_view("formulario_datos");
       });
-        
-    $("#main").on("click",".editar_registro", function(e){
+      $("#main").find(".cancelar").click(function(){
+        $("#frm_datos")[0].reset();
+        change_view();
+      });
+        $("#main").on("click",".editar_registro", function(e){
         e.preventDefault();
         change_view("formulario_datos");
         let id=$(this).data("id")
         let obj={
-            "accion" : "consulta_individual",
+            "accion" : "consulta_clientes",
             "registro" : $(this).data("id")
         }
          $.post("../includes/_funciones.php", obj, function(data){
              $("#nombre").val(data.nombre_ppl);
              $("#pto").val(data.titulo_ppl);
-             $("#descripcion").val(data.descripcion_ppl);
+             $("#descp").val(data.descripcion_ppl);
              $("#foto").val(data.foto_ppl);
          }, "JSON");
         
         $("#registrar").text("Actualizar").data("edicion", 1).data("registro", id);
     });
-        
-      $("#main").find(".cancelar").click(function(){
-        $("#frm_datos")[0].reset();
-        change_view();
-      });
          $("#frm_datos").find("input").keyup(function(){
           $(this).removeClass("error");
         });
       $("#registrar").click(function(){
           
         let obj = {
-          "accion" : "insertar_cliente",
+          "accion" : "insertar_clientes"
+            
         };
+          
        
         $("#frm_datos").find("input").each(function(){
           $(this).removeClass("error");
@@ -202,34 +202,34 @@ require_once '../includes/_funciones.php';
           }
           
         });
-          
-          if($(this).data("edicion")==1){
-                obj["accion"]="editar_cliente";
+           if($(this).data("edicion")==1){
+                obj["accion"]="editar_clientes";
                 obj["registro"]=$(this).data("registro");
               $(this).text("Guardar").removeData("edicion").removeData("registro");
              }
-         $.post("../includes/_funciones.php", obj, function(data){
-            alert(data);
-            change_view();
-            mostrar_cliente();
-            $("#frm_datos")[0].reset();
-         }); 
+          
+              $.post("../includes/_funciones.php", obj, function(data){
+                alert(data);
+                  change_view(); 
+              mostrar_clientes();
+                   $("#frm_datos")[0].reset();  
+              });
+              
       });
-      $("#main").on("click",".eliminar_registro", function(e){
+      $("#main").on("click",".eliminar_registro",function(e){
         e.preventDefault();
         let id = $(this).data('id');
         let obj = {
-          "accion" : "eliminar_cliente",
+          "accion" : "eliminar_clientes",
           "people" : id
         }
         $.post("../includes/_funciones.php",obj, function(data){
-            alert(data);
-          mostrar_cliente();
+          mostrar_clientes();
         });
       });
-      function mostrar_cliente(){
+      function mostrar_clientes(){
         let obj = {
-          "accion" : "mostrar_cliente"
+          "accion" : "mostrar_clientes"
         }
         
         $.post("../includes/_funciones.php",obj, function(data){
@@ -238,10 +238,11 @@ require_once '../includes/_funciones.php';
             template += `
             <tr>
             <td>${elem.nombre_ppl}</td>
-            <td>${elem.pto_ppl}</td>
+            <td>${elem.titulo_ppl}</td>
+            <td>${elem.descripcion_ppl}</td>
             <td>
-            <a href="#" class="editar_registro"data-id="${elem.id_skl}">Editar</a>
-            <a href="#" class="eliminar_registro" data-id="${elem.id_skl}">Eliminar</a></td>
+            <a href="#" class="editar_registro"data-id="${elem.id_ppl}">Editar</a>
+            <a href="#" class="eliminar_registro" data-id="${elem.id_ppl}">Eliminar</a></td>
             </tr>
             `;
           });
