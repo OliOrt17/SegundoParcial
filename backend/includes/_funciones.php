@@ -16,11 +16,155 @@ if(isset($_POST["accion"])){
             
         case 'insertar_usuarios':
             insertar_usuarios($_POST["nombre"], $_POST["correo"], $_POST["telefono"], $_POST["password"], $_POST["trabajo"], $_POST["descripcion"], $_POST["tipo"], $_POST["facebook"], $_POST["twitter"], $_POST["linkedin"], $_POST["foto"]);
+            break;
+        case 'eliminar_skills':
+            eliminar_skills($_POST["skills"]);
+            break;
+        case 'mostrar_skills':
+            mostrar_skills();
+            break;
+        case 'insertar_skills':
+            insertar_skills();
+            break;
             
-		default:
+         case 'consulta_individualskl':
+            consulta_individualskl($_POST["registro"]);
+            break;
+         case 'editar_skl':
+            editar_skl();
+            break;
+            
+        case 'eliminar_cliente':
+            eliminar_cliente($_POST["people"]);
+            break;
+            
+        case 'mostrar_cliente':
+            mostrar_cliente();
+        
+        case 'insertar_cliente':
+            insertar_cliente();
+            break;
+          
+        case 'consulta_individual':
+            consulta_individual($_POST["registro"]);
+            break;
+        
+         case 'editar_cliente':
+            editar_cliente();
+            break;
+            
+        default:
 		break;
 	}
 }
+
+function insertar_cliente(){
+    global $db;
+    extract($_POST);
+    $insertar = $db->insert("people", ["nombre_ppl" => $nombre,
+                                    "titulo_ppl" => $pto,
+                                    "descripcion_ppl" => $descripcion,
+                                    "status_ppl" => 1,
+                                    "foto_ppl" => $foto]);
+    
+    if($insertar){
+        echo "Registro exitoso";
+    }else{
+        echo "Ocurrio un problema";
+    }
+
+}
+
+function eliminar_cliente($people){
+    global $db;
+    $eliminar=$db -> delete("people", ["id_ppl" =>$people]);
+    if($eliminar){
+        echo "Cliente eliminado";
+    }else{
+        echo "Ocurrio un problema";
+    }
+}
+
+function mostrar_cliente(){
+    global $db;
+    $consultar = $db -> select("people","*",["status_ppl"=>1]);
+    echo json_encode($consultar);
+}
+
+function consulta_individual($id){
+    global $db;
+    $consultar = $db -> get("people","*",["AND" => ["status_ppl"=>1, "id_ppl"=>$id]]);
+    echo json_encode($consultar);
+}
+
+function editar_cliente(){
+    global $db;
+    extract($_POST);
+    $editar = $db->update("people", ["nombre_ppl" => $nombre,
+                                    "titulo_ppl" => $pto,
+                                    "descripcion_ppl" => $descripcion,
+                                    "status_ppl" => 1,
+                                    "foto_ppl" => $foto],["id_ppl"=>$registro]);
+    
+    if($editar){
+        echo "Registro exitoso";
+    }else{
+        echo "Ocurrio un problema";
+    }
+
+}
+
+function mostrar_skills(){
+    global $db;
+    $consultar=$db->select("skills","*",["status_skl" =>1]);
+    echo json_encode($consultar);
+}
+function eliminar_skills($skills){
+    
+	global $db;
+	$eliminar_skills = $db->delete("skills",["id_skl" => $skills]);
+	if($eliminar_skills){
+		echo 0;
+	}else{
+		echo 1;
+	}
+
+}
+function insertar_skills(){
+        global $db;
+    extract($_POST);
+  $insertar_skills=$db ->insert("skills",["nombre_skl" => $nombre,
+                                              "por_skl"=>$porcentaje,
+                                              "status_skl"=>1
+                                             ]);
+    if($insertar_skills){
+		echo "Registro existoso";
+	}else{
+		echo "Se ocasiono un error";
+	}
+}
+
+function consulta_individualskl($id){
+    global $db;
+    $consultar = $db -> get("skills","*",["AND" => ["status_skl"=>1, "id_skl"=>$id]]);
+    echo json_encode($consultar);
+}
+
+function editar_skl(){
+    global $db;
+    extract($_POST);
+    $editar = $db->update("skills", ["nombre_skl" => $nombre,
+                                    "por_skl" => $porcentaje,
+                                    "status_skl" => 1], ["id_skl"=>$registro]);
+    
+    if($editar){
+        echo "Registro exitoso";
+    }else{
+        echo "Ocurrio un problema";
+    }
+
+}
+
 function mostrar_usuarios(){
 	global $db;
 	$consultar = $db->select("usuarios","*",["status_usr" => 1]);

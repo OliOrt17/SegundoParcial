@@ -33,11 +33,11 @@ require_once '../includes/_funciones.php';
             <li class="nav-item">
               <a class="nav-link" href="#">
                 <span data-feather="home"></span>
-                Dashboard 
+                Dashboard
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="../usuarios/">
+              <a class="nav-link" href="../usuarios/">
                 <span data-feather="file"></span>
                 Usuarios<span class="sr-only">(current)</span>
               </a>
@@ -48,14 +48,14 @@ require_once '../includes/_funciones.php';
                 Servicios<span class="sr-only">(current)</span>
               </a>
             </li>
-             <li class="nav-item">
+              <li class="nav-item">
               <a class="nav-link" href="../meet/">
                 <span data-feather="file"></span>
                 Meet<span class="sr-only">(current)</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../skills/">
+              <a class="nav-link active" href="../skills/">
                 <span data-feather="file"></span>
                 Skills<span class="sr-only">(current)</span>
               </a>
@@ -66,36 +66,41 @@ require_once '../includes/_funciones.php';
                 Portafolio<span class="sr-only">(current)</span>
               </a>
             </li>
-
+            <li class="nav-item">
+              <a class="nav-link" href="../people/">
+                <span data-feather="file"></span>
+                Personas<span class="sr-only">(current)</span>
+              </a>
+            </li>
           </ul>
         </div>
       </nav>
 
       <main id="main" role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
-        <h2>Usuarios
+        <h2>Skills
           <button type="button" id="btn_nuevo" class="btn btn-outline-primary">Nuevo</button>
         </h2>
         <div class="table-responsive view" id="mostrar_datos">
           <table class="table table-striped table-sm" id="table_datos">
             <thead>
               <tr>
-                <th>Usuario</th>
-                <th>Teléfono</th>
-                <th>Acciones</th>
+                <th>Servicios</th>
+                <th>Porcentajes</th>
+                <th>Accion</th>
               </tr>
             </thead>
             <tbody>
               <?php 
-              $usuarios = $db->select("usuarios","*",["status_usr" => 1]);
-              foreach ($usuarios as $usuario => $usr) {
+              $skills = $db->select("skills","*",["status_skl" => 1]);
+              foreach ($skills as $skills => $usr) {
                 ?>
                 <tr>
-                  <td><?php echo $usr["nombre_usr"]; ?></td>
-                  <td><?php echo $usr["telefono_usr"]; ?></td>
+                  <td><?php echo $usr["nombre_skl"]; ?></td>
+                  <td><?php echo $usr["por_skl"]; ?></td>
                   <td>
-                    <a href="#" class="editar_registro"data-id="<?php echo $usr["id_usr"]; ?>">Editar</a>
-                    <a href="#" class="eliminar_registro" data-id="<?php echo $usr["id_usr"]; ?>">Eliminar</a></td>
+                    <a href="#" class="editar_registro"data-id="<?php echo $usr["id_skl"]; ?>">Editar</a>
+                    <a href="#" class="eliminar_registro" data-id="<?php echo $usr["id_skl"]; ?>">Eliminar</a></td>
                   </tr>
                   <?php
                 }
@@ -112,46 +117,8 @@ require_once '../includes/_funciones.php';
                     <input type="text" class="form-control" name="nombre" id="nombre">
                   </div>
                   <div class="form-group">
-                    <label for="correo">Correo Eléctronico</label>
-                    <input type="email" class="form-control" name="correo" id="correo">
-                  </div>
-                  <div class="form-group">
-                    <label for="trabajo">Trabajo</label>
-                    <input type="text" class="form-control" name="trabajo" id="trabajo">
-                  </div>
-                  <div class="form-group">
-                    <label for="descripcion">Descripción</label>
-                    <input type="text" class="form-control" name="descripcion" id="descripcion">
-                  </div>
-                  <div class="form-group">
-                    <label for="foto">Foto</label>
-                    <input type="text" class="form-control" name="foto" id="foto">
-                  </div>
-                  <div class="form-group">
-                    <label for="tipo">Tipo</label>
-                    <input type="text" class="form-control" name="tipo" id="tipo">
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" class="form-control" name="password" id="password">
-                  </div>
-                  <div class="form-group">
-                    <label for="twitter">Twitter</label>
-                    <input type="text" class="form-control" name="twitter" id="twitter">
-                  </div>
-                  <div class="form-group">
-                    <label for="linkedin">Linkedin</label>
-                    <input type="text" class="form-control" name="linkedin" id="linkedin">
-                  </div>
-                  <div class="form-group">
-                    <label for="facebook">Facebook</label>
-                    <input type="text" class="form-control" name="facebook" id="facebook">
-                  </div>
-                  <div class="form-group">
-                    <label for="telefono">Teléfono</label>
-                    <input type="tel" class="form-control" name="telefono" id="telefono">
+                    <label for="porcentaje">Porcentaje</label>
+                    <input type="text" class="form-control" name="porcentaje" id="porcentaje">
                   </div>
                 </div>
               </div>
@@ -168,7 +135,6 @@ require_once '../includes/_funciones.php';
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    
     <script>
                 
       change_view();
@@ -184,60 +150,32 @@ require_once '../includes/_funciones.php';
       $("#btn_nuevo").click(function(){
         change_view("formulario_datos");
       });
+     $("#main").on("click",".editar_registro", function(e){
+        e.preventDefault();
+        change_view("formulario_datos");
+        let id=$(this).data("id")
+        let obj={
+            "accion" : "consulta_individualskl",
+            "registro" : $(this).data("id")
+        }
+         $.post("../includes/_funciones.php", obj, function(data){
+             $("#nombre").val(data.nombre_skl);
+             $("#porcentaje").val(data.por_skl);
+         }, "JSON");
+        
+        $("#registrar").text("Actualizar").data("edicion", 1).data("registro", id);
+    });
+        
       $("#main").find(".cancelar").click(function(){
         $("#frm_datos")[0].reset();
         change_view();
       });
-         $("#main").on("click",".editar_registro", function(e){
-        e.preventDefault();
-            change_view("formulario_datos");
-        let id=$(this).data("id")
-        let obj={
-            "accion" : "consulta_usuarios",
-            "registro" : $(this).data("id")
-        }
-         $.post("../includes/_funciones.php", obj, function(data){
-        $("#nombre").val(data.nombre_usr);
-        $("#correo").val(data.correo_usr);
-        $("#trabajo").val(data.tbj_usr);
-        $("#descripcion").val(data.descp_usr);
-        $("#foto").val(data.foto_usr);
-        $("#tipo").val(data.tipo_usr);
-        $("#password").val(data.password_usr);
-        $("#twitter").val(data.twitter_usr);
-        $("#linkedin").val(data.linkedin_usr);
-        $("#facebook").val(data.faceb_usr);
-        $("#telefono").val(data.telefono_usr);
-         }, "JSON");
-     $("#frm_datos").find("input").keyup(function(){
+         $("#frm_datos").find("input").keyup(function(){
           $(this).removeClass("error");
         });
       $("#registrar").click(function(){
-          
-          let nombre=$("#nombre").val();
-        let correo=$("#correo").val();
-        let trabajo=$("#trabajo").val();
-        let descripcion=$("#descripcion").val();
-        let foto=$("#foto").val();
-        let tipo=$("#tipo").val();
-        let password=$("#password").val();
-        let twitter=$("#twitter").val();
-        let linkedin=$("#linkedin").val();
-        let facebook=$("#facebook").val();
-        let telefono=$("#telefono").val();
         let obj = {
-          "accion" : "insertar_usuarios",
-            "nombre" : nombre,
-            "correo" : correo,
-            "trabajo" : trabajo,
-            "descripcion" : descripcion,
-            "foto" : foto,
-            "tipo" : tipo,
-            "password" : password,
-            "twitter" : twitter,
-            "linkedin" : linkedin,
-            "facebook" : facebook,
-            "telefono" : telefono
+          "accion" : "insertar_skills"
         };
           
        
@@ -251,40 +189,37 @@ require_once '../includes/_funciones.php';
           }
           
         });
-          if($(this).data("edicion")==1){
-                obj["accion"]="editar_servicios";
+          
+           if($(this).data("edicion")==1){
+                obj["accion"]="editar_skl";
                 obj["registro"]=$(this).data("registro");
               $(this).text("Guardar").removeData("edicion").removeData("registro");
              }
           
-          if(nombre.length==0 || correo.length==0 || trabajo.length==0 || descripcion.length==0 || foto.length==0 || tipo.length==0 || password.length==0 || twitter.length==0 || linkedin.length==0 ||facebook.length==0 || telefono.length==0){
-              alert("Por favor no dejes campos vacios");
-              
-          }else{
-              $.post("../includes/_funciones.php", obj, function(data){
-                  alert(data);
-                 change_view(); 
-                    mostrar_servicios();
-                   $("#frm_datos")[0].reset();  
-              });
-              
-          }
-          
+         $.post("../includes/_funciones.php", obj, function(data){
+            alert(data);
+            
+            mostrar_cliente();
+           
+         }); 
+          change_view();
+           $("#frm_datos")[0].reset();
       });
-      $("#main").on("click",".eliminar_registro",function(e){
+          
+      $("#main").on("click",".eliminar_registro", function(e){
         e.preventDefault();
         let id = $(this).data('id');
         let obj = {
-          "accion" : "eliminar_usuarios",
-          "usuario" : id
+          "accion" : "eliminar_skills",
+          "skills" : id
         }
         $.post("../includes/_funciones.php",obj, function(data){
-          mostrar_usuarios();
+          mostrar_skills();
         });
       });
-      function mostrar_usuarios(){
+      function mostrar_skills(){
         let obj = {
-          "accion" : "mostrar_usuarios"
+          "accion" : "mostrar_skills"
         }
         
         $.post("../includes/_funciones.php",obj, function(data){
@@ -292,12 +227,12 @@ require_once '../includes/_funciones.php';
           $.each(data, function(e,elem){
             template += `
             <tr>
-            <td>${elem.nombre_usr}</td>
-            <td>${elem.telefono_usr}</td>
+            <td>${elem.nombre_skl}</td>
+            <td>${elem.por_skl}</td>
             <td>
-            <a href="#" class="editar_registro"data-id="${elem.id_usr}">Editar</a>
-            <a href="#" class="eliminar_registro" data-id="${elem.id_usr}">Eliminar</a></td>
-            </tr>ﬂﬂﬂ
+            <a href="#" class="editar_registro"data-id="${elem.id_skl}">Editar</a>
+            <a href="#" class="eliminar_registro" data-id="${elem.id_skl}">Eliminar</a></td>
+            </tr>
             `;
           });
           $("#table_datos tbody").html(template);
