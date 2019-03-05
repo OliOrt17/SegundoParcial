@@ -48,7 +48,24 @@ require_once '../includes/_funcionessvc.php';
                 Servicios<span class="sr-only">(current)</span>
               </a>
             </li>
-
+              <li class="nav-item">
+              <a class="nav-link" href="../meet/">
+                <span data-feather="file"></span>
+                Meet<span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../skills/">
+                <span data-feather="file"></span>
+                Skills<span class="sr-only">(current)</span>
+              </a>
+            </li>
+             <li class="nav-item">
+              <a class="nav-link" href="../portafolio/">
+                <span data-feather="file"></span>
+                Portafolio<span class="sr-only">(current)</span>
+              </a>
+            </li>
           </ul>
         </div>
       </nav>
@@ -76,7 +93,7 @@ require_once '../includes/_funcionessvc.php';
                   <td><?php echo $usr["nombre_svc"]; ?></td>
                   <td><?php echo $usr["descripcion_svc"]; ?></td>
                   <td>
-                    <a href="#" class=""data-id="<?php echo $usr["id_svc"]; ?>">Editar</a>
+                    <a href="#" class="editar_registro"data-id="<?php echo $usr["id_svc"]; ?>">Editar</a>
                     <a href="#" class="eliminar_registro" data-id="<?php echo $usr["id_svc"]; ?>">Eliminar</a></td>
                   </tr>
                   <?php
@@ -135,21 +152,33 @@ require_once '../includes/_funcionessvc.php';
         $("#frm_datos")[0].reset();
         change_view();
       });
-      $("#registrar").click(function(){
-          
-          let nombre=$("#nombre").val();
-        let descripcion=$("#descripcion").val();
-        let foto=$("#foto").val();
-        let obj = {
-          "accion" : "insertar_servicios",
-            "nombre" : nombre,
-            "descripcion" : descripcion,
-            "foto" : foto
-        };
-          
-        $("#frm_datos").find("input").keyup(function(){
+        $("#main").on("click",".editar_registro", function(e){
+        e.preventDefault();
+        change_view("formulario_datos");
+        let id=$(this).data("id")
+        let obj={
+            "accion" : "consulta_individual",
+            "registro" : $(this).data("id")
+        }
+         $.post("../includes/_funcionessvc.php", obj, function(data){
+             $("#nombre").val(data.nombre_svc);
+             $("#descripcion").val(data.descripcion_svc);
+             $("#foto").val(data.foto_svc)
+         }, "JSON");
+        
+        $("#registrar").text("Actualizar").data("edicion", 1).data("registro", id);
+    });
+         $("#frm_datos").find("input").keyup(function(){
           $(this).removeClass("error");
         });
+      $("#registrar").click(function(){
+          
+        let obj = {
+          "accion" : "insertar_servicios"
+            
+        };
+          
+       
         $("#frm_datos").find("input").each(function(){
           $(this).removeClass("error");
           if($(this).val() == ""){
@@ -160,22 +189,21 @@ require_once '../includes/_funcionessvc.php';
           }
           
         });
+           if($(this).data("edicion")==1){
+                obj["accion"]="editar_servicios";
+                obj["registro"]=$(this).data("registro");
+              $(this).text("Guardar").removeData("edicion").removeData("registro");
+             }
           
-          if(nombre.length==0 || descripcion.length==0 || foto.length==0){
-              alert("Por favor no dejes campos vacios");
-              
-          }else{
               $.post("../includes/_funcionessvc.php", obj, function(data){
+                alert(data);
+                  change_view(); 
               mostrar_servicios();
+                   $("#frm_datos")[0].reset();  
               });
-              alert("Registro exitoso");
-              $("#frm_datos")[0].reset();
               
-
-          }
-          
       });
-      $("#main").find(".eliminar_registro").click(function(e){
+      $("#main").on("click",".eliminar_registro",function(e){
         e.preventDefault();
         let id = $(this).data('id');
         let obj = {
@@ -199,7 +227,7 @@ require_once '../includes/_funcionessvc.php';
             <td>${elem.nombre_svc}</td>
             <td>${elem.descripcion_svc}</td>
             <td>
-            <a href="#" class=""data-id="${elem.id_svc}">Editar</a>
+            <a href="#" class="editar_registro"data-id="${elem.id_svc}">Editar</a>
             <a href="#" class="eliminar_registro" data-id="${elem.id_svc}">Eliminar</a></td>
             </tr>
             `;

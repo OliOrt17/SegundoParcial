@@ -12,11 +12,38 @@ if(isset($_POST["accion"])){
 		break;
             
         case 'insertar_servicios':
-            insertar_servicios($_POST["nombre"],$_POST["descripcion"],$_POST["foto"]);
-            
+            insertar_servicios();
+            break;
+        case 'consulta_individual':
+            consulta_individual($_POST["registro"]);
+            break;
+        case 'editar_servicios':
+            editar_servicios();
 		default:
 		break;
 	}
+}
+
+function consulta_individual($id){
+    global $db;
+    $consultar = $db -> get("servicios","*",["AND" => ["status_svc"=>1, "id_svc"=>$id]]);
+    echo json_encode($consultar);
+}
+
+function editar_servicios(){
+    global $db;
+    extract($_POST);
+    $editar = $db->update("servicios", ["nombre_svc" => $nombre,
+                                    "descripcion_svc" => $descripcion,
+                                    "foto_svc" => $foto,
+                                    "status_svc" => 1],["id_svc"=>$registro]);
+    
+    if($editar){
+        echo "Registro exitoso";
+    }else{
+        echo "Ocurrio un problema";
+    }
+
 }
 function mostrar_servicios(){
 	global $db;
@@ -34,18 +61,20 @@ function eliminar_servicios($servicios){
 	}
 }
 
-function insertar_servicios($nombre, $descripcion,$foto){
+function insertar_servicios(){
  
     global $db;
+    extract ($_POST);
   $insertar_servicios=$db ->insert("servicios",["nombre_svc" => $nombre,
                                              "descripcion_svc" => $descripcion,
                                               "foto_svc" => $foto,
                                               "status_svc" => 1
                                              ]);
+    
     if($insertar_servicios){
-		echo 1;
+		echo "registro exitoso";
 	}else{
-		echo 0;
+		echo "se produjo un error";
 	}
  
 }
