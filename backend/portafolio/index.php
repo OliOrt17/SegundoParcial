@@ -95,8 +95,8 @@ require_once '../includes/_funcionessvc.php';
                   <td><?php echo $usr["nombre"]; ?></td>
                   <td><?php echo $usr["descripcion"]; ?></td>
                   <td>
-                    <a href="#" class=""data-id="<?php echo $usr["id"]; ?>">Editar</a>
-                    <a href="#" class="eliminar_registro" data-id="<?php echo $usr["id"]; ?>">Eliminar</a></td>
+                    <a href="#" class="editar_registro"data-id="<?php echo $usr["Id"]; ?>">Editar</a>
+                    <a href="#" class="eliminar_registro" data-id="<?php echo $usr["Id"]; ?>">Eliminar</a></td>
                   </tr>
                   <?php
                 }
@@ -154,6 +154,28 @@ require_once '../includes/_funcionessvc.php';
         $("#frm_datos")[0].reset();
         change_view();
       });
+        
+        $("#main").on("click",".editar_registro", function(e){
+        e.preventDefault();
+        change_view("formulario_datos");
+        let id=$(this).data("id")
+        let obj={
+            "accion" : "consulta_individual",
+            "registro" : $(this).data("id")
+        }
+         $.post("../includes/_funcionesptfo.php", obj, function(data){
+             $("#nombre").val(data.nombre);
+             $("#descripcion").val(data.descripcion);           
+             $("#foto").val(data.imagen)
+         }, "JSON");
+        
+        $("#registrar").text("Actualizar").data("edicion", 1).data("registro", id);
+    });
+        
+        $("#frm_datos").find("input").keyup(function(){
+            $(this).removeClass("error");
+        });
+        
       $("#registrar").click(function(){
           
           let nombre=$("#nombre").val();
@@ -166,9 +188,7 @@ require_once '../includes/_funcionessvc.php';
             "foto" : foto
         };
           
-        $("#frm_datos").find("input").keyup(function(){
-          $(this).removeClass("error");
-        });
+      
         $("#frm_datos").find("input").each(function(){
           $(this).removeClass("error");
           if($(this).val() == ""){
@@ -179,19 +199,26 @@ require_once '../includes/_funcionessvc.php';
           }
           
         });
+          if($(this).data("edicion")==1){
+                obj["accion"]="editar_portafolio";
+                obj["registro"]=$(this).data("registro");
+              $(this).text("Guardar").removeData("edicion").removeData("registro");
+             }
           
           if(nombre.length==0 || descripcion.length==0 || foto.length==0){
               alert("Por favor no dejes campos vacios");
               
           }else{
-              $.post("../includes/_funcionesptfo.php", obj, function(data){
-              mostrar_servicios();
+              $.post("../includes/_funcionesptfo.php", obj, function(data){             
+               alert(data);
+                  change_view(); 
+              mostrar_portafolio();
+                   $("#frm_datos")[0].reset(); 
               });
-              alert("Registro exitoso");
-              $("#frm_datos")[0].reset();              
+              
           }          
       });
-      $("#main").find(".eliminar_portafolio").click(function(e){
+      $("#main").on("click",".eliminar_registro",function(e){
         e.preventDefault();
         let id = $(this).data('id');
         let obj = {
@@ -199,7 +226,7 @@ require_once '../includes/_funcionessvc.php';
           "servicios" : id
         }
         $.post("../includes/_funcionesptfo.php",obj, function(data){
-          mostrar_servicios();
+          mostrar_portafolio();
         });
       });
       function mostrar_portafolio(){
@@ -212,11 +239,11 @@ require_once '../includes/_funcionessvc.php';
           $.each(data, function(e,elem){
             template += `
             <tr>
-            <td>${elem.nombre_svc}</td>
-            <td>${elem.descripcion_svc}</td>
+            <td>${elem.nombre}</td>
+            <td>${elem.descripcion}</td>
             <td>
-            <a href="#" class=""data-id="${elem.id_svc}">Editar</a>
-            <a href="#" class="eliminar_registro" data-id="${elem.id_svc}">Eliminar</a></td>
+            <a href="#" class="editar_registro"data-id="${elem.Id}">Editar</a>
+            <a href="#" class="eliminar_registro" data-id="${elem.Id}">Eliminar</a></td>
             </tr>
             `;
           });
