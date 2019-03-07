@@ -1,7 +1,9 @@
+
 <?php 
 require_once 'backend/includes/_db.php';
 require_once 'backend/includes/_funciones.php';
 ?>
+
 <!DOCTYPE html>
 <html lang="es-MX">
 <head>
@@ -49,38 +51,21 @@ require_once 'backend/includes/_funciones.php';
             to create awesome websites and applications.</h6>
 			</div>
 		</div>
-   <div class="container">
-    <div class="row">
+     <div class="row">
+    <?php
+        $servicios=$db->select("servicios","*");
+        foreach($servicios as $indice =>$servicio){            
+            ?>
 			<div class="col-sm-6 col-md-3 items">
-			    <center><img src="img/flag.png" alt="Branding"></center>
-			    <h2>BRANDING</h2>
-			    <h6>Lorem ipsum dolor sit amet, <br>
-                    consectetuer adipiscing elit,<br> sed diam nonummy nibh.</h6>
-			</div>
-			<div class="col-sm-6 col-md-3 items">
-			     <center><img src="img/pencil.png" alt="Branding"></center>
-			    <h2>DESIGN</h2>
-                <h6>Sed ut perspiciatis unde <br>
-                omnis iste natus error sit <br>voluptatem  </h6>
-			</div>
-			<div class="col-sm-6 col-md-3 items">
-			     <center><img src="img/settings.png" alt="Branding"></center>
-			    <h2>DEVELOPMENT</h2>
-			    <h6>At vero eos et accusamus et <br> iusto odio dignissimos qui <br>blanditiis praesentium.  </h6>
-			</div>
-			<div class="col-sm-6 col-md-3 items">
-			     <center><img src="img/rocket.png" alt="Branding"></center>
-			    <h2>ROCKET SCIENCE</h2>
-			    <h6>Et harum quidem rerum est <br> et expedita distinctio. Nam <br>libero tempore.</h6>
-			</div>
-
+			    <center><img src="img/flag.png" alt=""></center>
+			    <h2><?php echo $servicio["nombre_svc"];?></h2>
+			    <h6><?php echo $servicio["descripcion_svc"];?></h6>
+			</div>			
+                <?php
+        }
+        ?>        
 		</div>
    </div>
-
-
-
-
-
 	</div>
 
 	<div class="Meet container-fluid">
@@ -196,69 +181,22 @@ require_once 'backend/includes/_funciones.php';
 
 			<div class="container">
 		    <div class="row">
-					<div class="col-md-3 col-sm-6">
-							<div class="progress blue">
-									<span class="progress-left">
-											<span class="progress-bar"></span>
-									</span>
-									<span class="progress-right">
-											<span class="progress-bar"></span>
-									</span>
-									<div class="progress-value">90%</div>
-							</div>
-							<div class="textop">
-								<h4>WEB DESIGN</h4>
-							</div>
-
+					<?php
+                    $skills=$db->select("skills","*");
+                    foreach($skills as $indice => $skill){
+                    ?>
+                    <div class="col-sm-3 group">
+						<div class="circle" id="circles-<?php echo $skill["id_skl"]?>" data-percent="<?php echo $skill["por_skl"]?>"></div>
+						<h3><?php echo $skill["nombre_skl"];?></h3>
 					</div>
-		        <div class="col-md-3 col-sm-6">
-		            <div class="progress pink">
-		                <span class="progress-left">
-		                    <span class="progress-bar"></span>
-		                </span>
-		                <span class="progress-right">
-		                    <span class="progress-bar"></span>
-		                </span>
-		                <div class="progress-value">75%</div>
-		            </div>
-								<div class="textop">
-									<h4>HTML / CSS</h4>
-								</div>
-		        </div>
-		        <div class="col-md-3 col-sm-6">
-		            <div class="progress green">
-		                <span class="progress-left">
-		                    <span class="progress-bar"></span>
-		                </span>
-		                <span class="progress-right">
-		                    <span class="progress-bar"></span>
-		                </span>
-		                <div class="progress-value">70%</div>
-
-		            </div>
-								<div class="textop">
-									<h4>GRAPHIC DESIGN</h4>
-								</div>
-		        </div>
-						<div class="col-md-3 col-sm-6">
-		            <div class="progress orange">
-		                <span class="progress-left">
-		                    <span class="progress-bar"></span>
-		                </span>
-		                <span class="progress-right">
-		                    <span class="progress-bar"></span>
-		                </span>
-		                <div class="progress-value">85%</div>
-		            </div>
-								<div class="textop">
-									<h4>UI / UX</h4>
-								</div>
+                   <?php                    
+                        }                  
+                    ?>
 		        </div>
 		    </div>
 		</div>
 
-		</div>
-		<!-- Empieza portafolio-->
+  <!-- Empieza portafolio-->
 		<div class="portfolio">
 			    	<div class="wrapper">
 			        	<h2>OUR PORTFOLIO</h2>
@@ -375,7 +313,8 @@ require_once 'backend/includes/_funciones.php';
         <textarea type="text" id="mensaje" name="mensaje" placeholder="Your Message" rows="7" cols="45"></textarea>
     </form></center>
 	    <br>
-	    <center><a class="btn btn-primary btn-lg" id="buttonSubmit">SEND MESSAGE</a></center>
+	   
+      <center><a class="btn btn-primary btn-lg" id="buttonSubmit">SEND MESSAGE</a></center>
 	</div>
 
 	<footer>
@@ -394,6 +333,7 @@ require_once 'backend/includes/_funciones.php';
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
 	<script>
 		$("#buttonSubmit").click(function(){
        
@@ -417,5 +357,58 @@ require_once 'backend/includes/_funciones.php';
     
     });
 	</script>
+
+	<script type="text/javascript" src="js/circles.js"></script>
+	<script>
+    let circle1 = document.getElementById("circles-1");
+    let circle2 = document.getElementById("circles-2");
+    let circle3 = document.getElementById("circles-3");
+    let circle4 = document.getElementById("circles-4");
+	Circles.create(
+		{
+		id:'circles-1',
+		percentage: circle1.dataset.percent,
+		radius:     80,
+		width:      15,
+		number:   	circle1.dataset.percent,
+		text:       '%',
+		colors:['#dfe8ed', '#30bae7']
+		}
+	);
+	Circles.create(
+		{
+		id:'circles-2',
+		percentage: circle2.dataset.percent,
+		radius:     80,
+		width:      15,
+		number:   	circle2.dataset.percent,
+		text:       '%',
+		colors:['#dfe8ed', '#d74680']
+		}
+	);
+	Circles.create(
+		{
+		id:'circles-3',
+		percentage: circle3.dataset.percent,
+		radius:     80,
+		width:      15,
+		number:   	circle3.dataset.percent,
+		text:       '%',
+		colors:['#dfe8ed', '#15c7a8']
+		}
+	);
+	Circles.create(
+		{
+		id:'circles-4',
+		percentage: circle4.dataset.percent,
+		radius:     80,
+		width:      15,
+		number:   	circle4.dataset.percent,
+		text:       '%',
+		colors:['#dfe8ed', '#eb7d4b']
+		}
+	);
+    </script>
+
 </body>
 </html>

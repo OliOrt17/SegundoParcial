@@ -75,10 +75,10 @@ require_once '../includes/_funciones.php';
                 Portafolio<span class="sr-only">(current)</span>
               </a>
             </li>
-            <li class="nav-item">
+             <li class="nav-item">
               <a class="nav-link" href="../people/">
                 <span data-feather="file"></span>
-                Personas<span class="sr-only">(current)</span>
+                Clientes<span class="sr-only">(current)</span>
               </a>
             </li>
           </ul>
@@ -159,7 +159,11 @@ require_once '../includes/_funciones.php';
       $("#btn_nuevo").click(function(){
         change_view("formulario_datos");
       });
-     $("#main").on("click",".editar_registro", function(e){
+      $("#main").find(".cancelar").click(function(){
+        $("#frm_datos")[0].reset();
+        change_view();
+      });
+        $("#main").on("click",".editar_registro", function(e){
         e.preventDefault();
         change_view("formulario_datos");
         let id=$(this).data("id")
@@ -174,17 +178,14 @@ require_once '../includes/_funciones.php';
         
         $("#registrar").text("Actualizar").data("edicion", 1).data("registro", id);
     });
-        
-      $("#main").find(".cancelar").click(function(){
-        $("#frm_datos")[0].reset();
-        change_view();
-      });
          $("#frm_datos").find("input").keyup(function(){
           $(this).removeClass("error");
         });
       $("#registrar").click(function(){
+          
         let obj = {
           "accion" : "insertar_skills"
+            
         };
           
        
@@ -198,24 +199,21 @@ require_once '../includes/_funciones.php';
           }
           
         });
-          
            if($(this).data("edicion")==1){
-                obj["accion"]="editar_skl";
+                obj["accion"]="editar_skills";
                 obj["registro"]=$(this).data("registro");
               $(this).text("Guardar").removeData("edicion").removeData("registro");
              }
           
-         $.post("../includes/_funciones.php", obj, function(data){
-            alert(data);
-            
-            mostrar_cliente();
-           
-         }); 
-          change_view();
-           $("#frm_datos")[0].reset();
+              $.post("../includes/_funciones.php", obj, function(data){
+                alert(data);
+                  change_view(); 
+              mostrar_skills();
+                   $("#frm_datos")[0].reset();  
+              });
+              
       });
-          
-      $("#main").on("click",".eliminar_registro", function(e){
+      $("#main").on("click",".eliminar_registro",function(e){
         e.preventDefault();
         let id = $(this).data('id');
         let obj = {

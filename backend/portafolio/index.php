@@ -75,6 +75,12 @@ require_once '../includes/_funcionessvc.php';
                 Portafolio<span class="sr-only">(current)</span>
               </a>
             </li>
+             <li class="nav-item">
+              <a class="nav-link" href="../people/">
+                <span data-feather="file"></span>
+                Clientes<span class="sr-only">(current)</span>
+              </a>
+            </li>
           </ul>
         </div>
       </nav>
