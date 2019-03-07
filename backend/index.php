@@ -1,4 +1,6 @@
-
+<?php
+session_start();
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -36,8 +38,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script>
     $("#buttonSubmit").click(function(){
- 
-      let usuario = $("#inputEmail").val();
+       
+	  let usuario = $("#inputEmail").val();
       let password = $("#inputPassword").val();
       if(usuario == "" || password == ""){
         alert("Los campos de Correo y Password son Requeridos");
@@ -59,20 +61,11 @@
            else if(data==0){
                 alert("contraseña invalida");
             }
-        }else{
-            
-             setTimeout(function(){ location.href='./usuarios'; }, 3000);
-            
+        }else{            		
+             setTimeout(function(){ location.href='./usuarios'; }, 3000);            
         }
       });
     });
-
-
-
-
-
-
-
 
 
   </script>

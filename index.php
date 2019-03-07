@@ -1,3 +1,7 @@
+<?php 
+require_once 'backend/includes/_db.php';
+require_once 'backend/includes/_funciones.php';
+?>
 <!DOCTYPE html>
 <html lang="es-MX">
 <head>
@@ -371,7 +375,7 @@
         <textarea type="text" id="mensaje" name="mensaje" placeholder="Your Message" rows="7" cols="45"></textarea>
     </form></center>
 	    <br>
-	    <center><a class="btn btn-primary btn-lg" href="#">SEND MESSAGE</a></center>
+	    <center><a class="btn btn-primary btn-lg" id="buttonSubmit">SEND MESSAGE</a></center>
 	</div>
 
 	<footer>
@@ -390,5 +394,28 @@
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+	<script>
+		$("#buttonSubmit").click(function(){
+       
+	  let nombre = $("#name").val();
+      let correo = $("#mail").val();
+	  let mensaje = $("#mensaje").val();
+      let obj = {
+        "accion" : "insertar_comentario",
+        "nombre" : nombre,
+        "correo" : correo,
+		"mensaje" : mensaje
+      };
+     $.post("backend/includes/_funciones.php", obj, function(data){})
+      .then((data)=>{
+        if(data!=1){
+                alert("Ocurrio un error al guardar el comentario");
+		}else{
+			     alert("Comentario guardado correctamente");
+		}                  
+        });
+    
+    });
+	</script>
 </body>
 </html>

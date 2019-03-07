@@ -1,4 +1,6 @@
 <?php  
+session_start();
+
 require_once '_db.php';
 if(isset($_POST["accion"])){
 	switch ($_POST["accion"]) {
@@ -53,7 +55,11 @@ if(isset($_POST["accion"])){
             editar_cliente();
             break;
             
-        default:
+        case 'insertar_comentario':
+		  insertar_comentario($_POST["nombre"], $_POST["correo"], $_POST["mensaje"]);
+		    break;
+        
+		default:
 		break;
 	}
 }
@@ -183,7 +189,9 @@ function login($usuario, $password){
                echo 0;
                return false;
            }else{
-               echo 1;
+               $_SESSION['activo'] = "1";
+				$_SESSION['usuario'] = $usuario;
+			   echo 1;			   	
                return;
            }
         } else {
@@ -225,6 +233,20 @@ function insertar_usuarios($nombre, $correo, $telefono, $password, $trabajo, $de
 		echo 0;
 	}
  
+}
+
+function insertar_comentario($nombre, $correo, $mensaje){ 
+    global $db;
+  $insertar_comentario=$db ->insert("comentarios",
+											["nombre" => $nombre,
+                                           "correo" => $correo,
+                                            "mensaje" => $mensaje
+                                             ]);
+    if($insertar_comentario){
+		echo 1;
+	}else{
+		echo 0;
+	} 
 }
 ?>
 
