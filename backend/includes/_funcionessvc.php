@@ -19,6 +19,7 @@ if(isset($_POST["accion"])){
             break;
         case 'editar_servicios':
             editar_servicios();
+            break;
 		default:
 		break;
 	}

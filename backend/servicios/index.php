@@ -151,6 +151,7 @@ require_once '../includes/_funcionessvc.php';
           }
         });
       }
+        
       $("#btn_nuevo").click(function(){
         change_view("formulario_datos");
       });
