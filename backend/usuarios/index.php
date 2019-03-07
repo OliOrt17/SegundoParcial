@@ -27,7 +27,7 @@ require_once '../includes/_funciones.php';
     <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
-        <a class="nav-link" id="signOut" href="#">Sign out</a>
+        <a class="nav-link" id="" href="../includes/cerrarsesion.php">Sign out</a>
       </li>
     </ul>
   </nav>
@@ -310,13 +310,6 @@ require_once '../includes/_funciones.php';
           $("#table_datos tbody").html(template);
         },"JSON");      
       }
-                       
-    $("#signOut").click(function(){
-     <?php   
-	 #session_destroy();
-        $_SESSION['activo']="0";
-     header("Location:../index.php");
-     ?>
     });          
              
     </script>
