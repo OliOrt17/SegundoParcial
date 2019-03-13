@@ -136,7 +136,9 @@ require_once '../includes/_funciones.php';
                   </div>
                    <div class="form-group">
                     <label for="foto">Foto</label>
-                    <input type="text" class="form-control" name="foto" id="foto">
+                    <input type="file" name="archivo" id="archivo">
+                    <input type="hidden" readonly="readonly" class="form-control" name="foto" id="foto">
+                    <div id="respuesta"></div>
                   </div>
                 </div>
               </div>
@@ -154,7 +156,29 @@ require_once '../includes/_funciones.php';
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
-                
+          $("#archivo").change(function(){
+            let formDatos=new FormData($("#frm_datos")[0]);
+            formDatos.append("accion", "carga_foto");
+            $.ajax({
+                url: "../includes/_funciones.php",
+                type: "POST",
+                data: formDatos,
+                contentType:false,
+                processData:false,
+                success: function(datos){
+                    let respuesta = JSON.parse(datos);
+                    if(respuesta.status==0){
+                        alert("No se guardo la foto");
+                    }
+                    let imagen=`
+                        <img src="${respuesta.archivo}" alt="img-fluid"/>
+                        `;
+                    $("#foto").val(respuesta.archivo);
+                    $("#respuesta").html(imagen);
+                }
+            });
+            console.log(formDatos);
+        });         
       change_view();
       function change_view(vista = "mostrar_datos"){
         $("#main").find(".view").each(function(){

@@ -1,6 +1,13 @@
 <?php 
+session_start();
+$sesion = $_SESSION['activo'];
+
+if($sesion != "1" ){
+	echo 'Acceso denegado';
+	header("Location: ../index.php");
+}
 require_once '../includes/_db.php';
-require_once '../includes/_funcionessvc.php';
+require_once '../includes/_funciones.php';
 ?>
 <!doctype html>
 <html lang="en">
@@ -122,7 +129,9 @@ require_once '../includes/_funcionessvc.php';
                   </div>
                   <div class="form-group">
                     <label for="foto">Foto</label>
-                    <input type="text" class="form-control" name="foto" id="foto">
+                    <input type="file" name="archivo" id="archivo">
+                    <input type="hidden" readonly="readonly" class="form-control" name="foto" id="foto">
+                    <div id="respuesta"></div>
                   </div>
                 </div>
               </div>
@@ -140,7 +149,29 @@ require_once '../includes/_funcionessvc.php';
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
-                
+     $("#archivo").change(function(){
+            let formDatos=new FormData($("#frm_datos")[0]);
+            formDatos.append("accion", "carga_foto");
+            $.ajax({
+                url: "../includes/_funciones.php",
+                type: "POST",
+                data: formDatos,
+                contentType:false,
+                processData:false,
+                success: function(datos){
+                    let respuesta = JSON.parse(datos);
+                    if(respuesta.status==0){
+                        alert("No se guardo la foto");
+                    }
+                    let imagen=`
+                        <img src="${respuesta.archivo}" alt="img-fluid"/>
+                        `;
+                    $("#foto").val(respuesta.archivo);
+                    $("#respuesta").html(imagen);
+                }
+            });
+            console.log(formDatos);
+        });        
       change_view();
       function change_view(vista = "mostrar_datos"){
         $("#main").find(".view").each(function(){
@@ -167,10 +198,10 @@ require_once '../includes/_funcionessvc.php';
             "accion" : "consulta_individual",
             "registro" : $(this).data("id")
         }
-         $.post("../includes/_funcionessvc.php", obj, function(data){
+         $.post("../includes/_funciones.php", obj, function(data){
              $("#nombre").val(data.nombre_svc);
              $("#descripcion").val(data.descripcion_svc);
-             $("#foto").val(data.foto_svc)
+             $("#foto").val(data.foto_svc);
          }, "JSON");
         
         $("#registrar").text("Actualizar").data("edicion", 1).data("registro", id);
@@ -179,9 +210,15 @@ require_once '../includes/_funcionessvc.php';
           $(this).removeClass("error");
         });
       $("#registrar").click(function(){
-          
+        
+        let nombre=$("#nombre").val();
+        let descripcion=$("#descripcion").val();
+        let foto=$("#foto").val();
         let obj = {
-          "accion" : "insertar_servicios"
+        "accion" : "insertar_servicios",
+        "nombre":nombre,
+        "descripcion":descripcion,
+        "foto":foto
             
         };
           
@@ -202,13 +239,17 @@ require_once '../includes/_funcionessvc.php';
               $(this).text("Guardar").removeData("edicion").removeData("registro");
              }
           
-              $.post("../includes/_funcionessvc.php", obj, function(data){
-                alert(data);
+              if(nombre.length==0 || descripcion.length==0 || foto.length==0 ){
+              alert("Por favor no dejes campos vacios");
+
+          }else{
+              $.post("../includes/_funciones.php", obj, function(data){
+                  alert(data);
                   change_view(); 
               mostrar_servicios();
-                   $("#frm_datos")[0].reset();  
+                   $("#frm_datos")[0].reset(); 
               });
-              
+          }
       });
       $("#main").on("click",".eliminar_registro",function(e){
         e.preventDefault();
@@ -217,7 +258,7 @@ require_once '../includes/_funcionessvc.php';
           "accion" : "eliminar_servicios",
           "servicios" : id
         }
-        $.post("../includes/_funcionessvc.php",obj, function(data){
+        $.post("../includes/_funciones.php",obj, function(data){
           mostrar_servicios();
         });
       });
@@ -226,7 +267,7 @@ require_once '../includes/_funcionessvc.php';
           "accion" : "mostrar_servicios"
         }
         
-        $.post("../includes/_funcionessvc.php",obj, function(data){
+        $.post("../includes/_funciones.php",obj, function(data){
           let template = ``; 
           $.each(data, function(e,elem){
             template += `

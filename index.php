@@ -28,6 +28,7 @@ require_once 'backend/includes/_funciones.php';
 						<li class="nav-item"><a href="#" class="nav-link">WORK</a></li>
 						<li class="nav-item"><a href="#" class="nav-link">BLOG</a></li>
 						<li class="nav-item"><a href="#" class="nav-link">CONTACT</a></li>
+						<li class="nav-item"><a href="backend/index.php" class="nav-link">ENTRAR</a></li>
 					</ul>
 				</nav>
 			</div>
@@ -57,7 +58,7 @@ require_once 'backend/includes/_funciones.php';
         foreach($servicios as $indice =>$servicio){            
             ?>
 			<div class="col-sm-6 col-md-3 items">
-			    <center><img src="img/flag.png" alt=""></center>
+			    <center><img src="<?php echo $servicio["foto_svc"];?>" alt=""></center>
 			    <h2><?php echo $servicio["nombre_svc"];?></h2>
 			    <h6><?php echo $servicio["descripcion_svc"];?></h6>
 			</div>			
@@ -66,7 +67,7 @@ require_once 'backend/includes/_funciones.php';
         ?>        
 		</div>
    </div>
-	</div>
+
 
 	<div class="Meet container-fluid">
 		<div class="row">

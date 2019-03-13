@@ -8,8 +8,9 @@ if($sesion != "1" ){
 }
 
 require_once '../includes/_db.php';
-require_once '../includes/_meet.php';
+require_once '../includes/_funciones.php';
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -51,17 +52,35 @@ require_once '../includes/_meet.php';
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="../servicios/">
+              <a class="nav-link " href="../servicios/">
                 <span data-feather="file"></span>
                 Servicios<span class="sr-only">(current)</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="../crew/">
+              <a class="nav-link active" href="../meet/">
                 <span data-feather="file"></span>
-                Servicios<span class="sr-only">(current)</span>
+                Meet<span class="sr-only">(current)</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../skills/">
+                <span data-feather="file"></span>
+                Skills<span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+             <a class="nav-link" href="../portafolio/">
+               <span data-feather="file"></span>
+               Portafolio<span class="sr-only">(current)</span>
+             </a>
+           </li>
+            <li class="nav-item">
+             <a class="nav-link" href="../people/">
+               <span data-feather="file"></span>
+               Clientes<span class="sr-only">(current)</span>
+             </a>
+           </li>
 
           </ul>
         </div>
@@ -90,7 +109,7 @@ require_once '../includes/_meet.php';
                   <td><?php echo $usr["nombre_cr"]; ?></td>
                   <td><?php echo $usr["descripcion_cr"]; ?></td>
                   <td>
-                    <a href="#" class=""data-id="<?php echo $usr["id_cr"]; ?>">Editar</a>
+                    <a href="#" class="editar_registro"data-id="<?php echo $usr["id_cr"]; ?>">Editar</a>
                     <a href="#" class="eliminar_registro" data-id="<?php echo $usr["id_cr"]; ?>">Eliminar</a></td>
                   </tr>
                   <?php
@@ -99,6 +118,7 @@ require_once '../includes/_meet.php';
               </tbody>
             </table>
           </div>
+
           <div id="formulario_datos" class="view">
             <form action="#" id="frm_datos">
               <div class="row">
@@ -111,9 +131,11 @@ require_once '../includes/_meet.php';
                     <label for="descripcion">Descripción</label>
                     <input type="text" class="form-control" name="descripcion" id="descripcion">
                   </div>
-                  <div class="form-group">
+                   <div class="form-group">
                     <label for="foto">Foto</label>
-                    <input type="text" class="form-control" name="foto" id="foto">
+                    <input type="file" name="archivo" id="archivo">
+                    <input type="hidden" readonly="readonly" class="form-control" name="foto" id="foto">
+                    <div id="respuesta"></div>
                   </div>
                 </div>
               </div>
@@ -121,7 +143,6 @@ require_once '../includes/_meet.php';
                 <div class="col">
                   <button type="button" class="btn btn-outline-danger cancelar">Cancelar</button>
                   <button type="button" class="btn btn-outline-success" id="registrar">Guardar</button>
-
                 </div>
               </div>
             </form>
@@ -129,9 +150,32 @@ require_once '../includes/_meet.php';
         </main>
       </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
-
+         $("#archivo").change(function(){
+            let formDatos=new FormData($("#frm_datos")[0]);
+            formDatos.append("accion", "carga_foto");
+            $.ajax({
+                url: "../includes/_funciones.php",
+                type: "POST",
+                data: formDatos,
+                contentType:false,
+                processData:false,
+                success: function(datos){
+                    let respuesta = JSON.parse(datos);
+                    if(respuesta.status==0){
+                        alert("No se guardo la foto");
+                    }
+                    let imagen=`
+                        <img src="${respuesta.archivo}" alt="img-fluid"/>
+                        `;
+                    $("#foto").val(respuesta.archivo);
+                    $("#respuesta").html(imagen);
+                }
+            });
+            console.log(formDatos);
+        });
       change_view();
       function change_view(vista = "mostrar_datos"){
         $("#main").find(".view").each(function(){
@@ -142,6 +186,7 @@ require_once '../includes/_meet.php';
           }
         });
       }
+
       $("#btn_nuevo").click(function(){
         change_view("formulario_datos");
       });
@@ -149,75 +194,87 @@ require_once '../includes/_meet.php';
         $("#frm_datos")[0].reset();
         change_view();
       });
-      $("#registrar").click(function(){
+      $("#main").on("click",".editar_registro", function(e){
+      e.preventDefault();
+      change_view("formulario_datos");
+      let id=$(this).data("id")
+      let obj={
+          "accion" : "consulta_individualcr",
+          "registro" : $(this).data("id")
+      }
+       $.post("../includes/_funciones.php", obj, function(data){
+           $("#nombre").val(data.nombre_cr);
+           $("#descripcion").val(data.descripcion_cr);
+           $("#foto").val(data.foto_cr)
+       }, "JSON");
 
-        let nombre=$("#nombre").val();
-        let descripcion=$("#descripcion").val();
-        let foto=$("#foto").val();
-        let obj = {
-          "accion" : "insertar_crew",
-          "nombre" : nombre,
-          "descripcion" : descripcion,
-          "foto" : foto
-        };
+      $("#registrar").text("Actualizar").data("edicion", 1).data("registro", id);
+  });
 
-        $("#frm_datos").find("input").keyup(function(){
-          $(this).removeClass("error");
-        });
-        $("#frm_datos").find("input").each(function(){
-          $(this).removeClass("error");
-          if($(this).val() == ""){
-            $(this).addClass("error").focus();
-            return false;
-          }else{
-            obj[$(this).prop("name")] = $(this).val();
-          }
+  $("#registrar").click(function(){
 
-        });
+    let obj = {
+      "accion" : "insertar_crew"
+    };
 
-          if(nombre.length==0 || descripcion.length==0 || foto.length==0){
-              alert("Por favor no dejes campos vacios");
+    $("#frm_datos").find("input").each(function(){
+      $(this).removeClass("error");
+      if($(this).val() == ""){
+        $(this).addClass("error").focus();
+        return false;
+      }
+      else{
+        obj[$(this).prop("name")] = $(this).val();
+      }
+    });
 
-          }else{
-              $.post("../includes/_crew.php", obj, function(data){
-              mostrar_crew();
-              });
-              alert("Registro exitoso");
-              $("#frm_datos")[0].reset();
-          }
+       if($(this).data("edicion")==1){
+            obj["accion"]="editar_crew";
+            obj["registro"]=$(this).data("registro");
+          $(this).text("Guardar").removeData("Edicion").removeData("Registro");
+         }
 
-      });
-      $("#main").find(".eliminar_registro").click(function(e){
+          $.post("../includes/_funciones.php", obj, function(data){
+            alert(data);
+            change_view();
+            mostrar_crew();
+            $("#frm_datos")[0].reset();
+          });
+  });
+
+      $("#main").on("click",".eliminar_registro",function(e){
         e.preventDefault();
         let id = $(this).data('id');
         let obj = {
           "accion" : "eliminar_crew",
-          "servicios" : id
+          "crew" : id
         }
-        $.post("../includes/_crew.php",obj, function(data){
+        $.post("../includes/_funciones.php",obj, function(data){
           mostrar_crew();
         });
       });
+
       function mostrar_crew(){
         let obj = {
           "accion" : "mostrar_crew"
         }
 
-        $.post("../includes/_crew.php",obj, function(data){
+        $.post("../includes/_funciones.php",obj, function(data){
           let template = ``;
           $.each(data, function(e,elem){
             template += `
             <tr>
-            <td>${elem.nombre_crew}</td>
-            <td>${elem.descripcion_crew}</td>
+            <td>${elem.nombre_cr}</td>
+            <td>${elem.descripcion_cr}</td>
             <td>
-            <a href="#" class=""data-id="${elem.id_crew}">Editar</a>
-            <a href="#" class="eliminar_registro" data-id="${elem.id_crew}">Eliminar</a></td>
+            <a href="#" class="editar_registro"data-id="${elem.id_cr}">Editar</a>
+            <a href="#" class="eliminar_registro" data-id="${elem.id_cr}">Eliminar</a></td>
             </tr>
             `;
           });
           $("#table_datos tbody").html(template);
         },"JSON");
       }
+
     </script>
     </html>
